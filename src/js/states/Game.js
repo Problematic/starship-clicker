@@ -65,6 +65,10 @@ GameState.prototype = {
             enemy.projectiles = this.enemyProjectiles;
 
             enemy.events.onKilled.add(function (enemy) {
+                var explosion = this.explosions.getFirstDead();
+                explosion.reset(enemy.x, enemy.y);
+                explosion.animations.play('regular');
+
                 var ct = this.combatTextPool.getFirstDead();
                 ct.text.setText(this.config.enemy.credValue.toSignedString());
                 ct.reset(enemy.x, enemy.y);
@@ -81,6 +85,9 @@ GameState.prototype = {
                 tween.start();
 
                 this.player.creds += this.config.enemy.credValue;
+
+                this.game.plugins.juicy.shake(16, 20);
+                this.screenFlash.flash(0.05, 16);
             }, this);
         }, this);
 
@@ -108,13 +115,9 @@ GameState.prototype = {
         game.physics.arcade.collide(this.player, this.enemies);
         game.physics.arcade.collide(this.enemies);
         game.physics.arcade.overlap(this.projectiles, this.enemies, function (projectile, enemy) {
-            var explosion = this.explosions.getFirstDead();
-            explosion.reset(enemy.x, enemy.y);
-            explosion.animations.play('regular');
-            enemy.kill();
+            enemy.damage(this.game.config.player.projectileDamage);
             projectile.kill();
-            this.game.plugins.juicy.shake(16, 20);
-            this.screenFlash.flash(0.05, 16);
+            this.game.plugins.juicy.shake(16, 5);
         }, null, this);
         game.physics.arcade.overlap(this.enemyProjectiles, this.player, function (player, projectile) {
             var ct = this.combatTextPool.getFirstDead();
@@ -154,7 +157,7 @@ GameState.prototype = {
                     continue;
                 }
                 enemy.reset(p.x, p.y);
-                enemy.revive();
+                enemy.revive(game.config.enemy.health);
                 var explosion = this.explosions.getFirstDead();
                 explosion.reset(enemy.x, enemy.y);
                 explosion.animations.play('burst');
