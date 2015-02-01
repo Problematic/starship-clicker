@@ -10,6 +10,10 @@ BootState.prototype = {
         game.plugins.juicy = game.plugins.add(require('plugins/Juicy'));
 
         game.state.start('Preload');
+
+        Number.prototype.toSignedString = function () {
+            return this > 0 ? '+' + this.toString() : this.toString();
+        };
     }
 };
 

@@ -1,4 +1,5 @@
 require('../css/app.css');
+require('../css/fonts.css');
 
 window.addEventListener('load', function () {
     var Phaser = require('phaser');

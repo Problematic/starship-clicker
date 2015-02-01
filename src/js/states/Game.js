@@ -49,6 +49,7 @@ GameState.prototype = {
         this.player.body.maxVelocity.setTo(this.config.player.maxVelocity);
         this.player.body.collideWorldBounds = true;
         this.player.nextShotAt = game.time.time;
+        this.player.creds = 0;
 
         // game.camera.follow(this.player);
 
@@ -63,6 +64,32 @@ GameState.prototype = {
             enemy.body.maxVelocity.setTo(100);
             enemy.body.collideWorldBounds = true;
             enemy.target = this.player;
+
+            enemy.events.onKilled.add(function (enemy) {
+                var ct = this.combatTextPool.getFirstDead();
+                ct.text.setText(this.config.enemy.credValue.toSignedString());
+                ct.reset(enemy.x, enemy.y);
+                var tween = game.add.tween(ct);
+                tween.to({
+                    y: '-50',
+                    x: '-50',
+                    alpha: 0
+                }, 1000, 'Circ.easeOut');
+                tween.onComplete.add(function () {
+                    ct.kill();
+                    ct.alpha = 1;
+                });
+                tween.start();
+
+                this.player.creds += this.config.enemy.credValue;
+            }, this);
+        }, this);
+
+        this.combatTextPool = game.add.group(game.world, 'combatText');
+        this.combatTextPool.createMultiple(10);
+        this.combatTextPool.forEach(function (sprite) {
+            sprite.text = game.add.text(0, 0, '', { fill: 'white', font: '24px kenvector_futureregular' });
+            sprite.addChild(sprite.text);
         }, this);
 
         this.controls = {
@@ -73,6 +100,10 @@ GameState.prototype = {
             strafeLeft: game.input.keyboard.addKey(Phaser.Keyboard.Q),
             strafeRight: game.input.keyboard.addKey(Phaser.Keyboard.E)
         };
+
+        var credTextStyle = { fill: 'white', font: '18px kenvector_futureregular' };
+        this.credText = game.add.text(10, 10, this.player.creds.toString(), credTextStyle);
+
     },
     update: function onUpdate (game) {
         game.physics.arcade.collide(this.player, this.enemies);
@@ -133,6 +164,7 @@ GameState.prototype = {
         }
     },
     render: function onRender (game) {
+        this.credText.setText(this.player.creds.toString());
         // game.debug.cameraInfo(game.camera, 10, 20);
         // game.debug.spriteInfo(this.player, 10, 125);
     }

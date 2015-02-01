@@ -23,7 +23,8 @@ module.exports = {
             { test: /phaser(\.min)?\.js$/, loader: 'exports?Phaser!script' },
             { test: /\.(png|jpg)$/, loader: 'url?limit=2048' },
             { test: /\.(ogg|mp3)$/, loader: 'file' },
-            { test: /\.css$/, loader: 'style!css' }
+            { test: /\.css$/, loader: 'style!css' },
+            { test: /\.(eot|svg|ttf|woff|woff2)$/, loader: 'file' }
         ]
     },
     plugins: [
