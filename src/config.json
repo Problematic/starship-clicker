@@ -4,6 +4,7 @@
     "projectileSpeed": 1000,
     "rateOfFire": 5,
     "acceleration": 500,
+    "lateralAcceleration": 500,
     "projectileSprite": "Lasers/laserBlue01",
     "projectileDamage": 1
   },

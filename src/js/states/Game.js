@@ -164,19 +164,23 @@ GameState.prototype = {
             }
         }
 
-        this.player.body.angularVelocity = 0;
-
-        if (this.controls.left.isDown) {
-            this.player.body.angularVelocity = -300;
-        } else if (this.controls.right.isDown) {
-            this.player.body.angularVelocity = 300;
-        }
+        var rotation = this.game.math.angleBetween(this.player.x, this.player.y, this.player.target.x, this.player.target.y);
+        this.player.rotation = rotation + this.player.rotationOffset;
 
         if (this.controls.up.isDown) {
             game.physics.arcade.accelerationFromRotation(this.player.rotation - this.player.rotationOffset, this.config.player.acceleration, this.player.body.acceleration);
         } else {
             this.player.body.acceleration.setTo(0);
         }
+
+        var lateralAcc = new Phaser.Point(0, 0);
+        if (this.controls.left.isDown) {
+            game.physics.arcade.accelerationFromRotation(this.player.rotation - this.player.rotationOffset - (Math.PI /2), this.config.player.lateralAcceleration, lateralAcc);
+        } if (this.controls.right.isDown) {
+            game.physics.arcade.accelerationFromRotation(this.player.rotation - this.player.rotationOffset + (Math.PI /2), this.config.player.lateralAcceleration, lateralAcc);
+        }
+
+        Phaser.Point.add(this.player.body.acceleration, lateralAcc, this.player.body.acceleration);
     },
     render: function onRender (game) {
         this.credText.setText(this.player.creds.toString());
