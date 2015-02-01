@@ -2,11 +2,17 @@
   "player": {
     "maxVelocity": 250,
     "projectileSpeed": 1000,
-    "rateOfFire": 5
+    "rateOfFire": 5,
+    "acceleration": 500,
+    "projectileSprite": "Lasers/laserBlue01"
   },
   "enemy": {
     "minimumDistance": 75,
     "maxVelocity": 200,
-    "credValue": 10
+    "credValue": 10,
+    "projectileSpeed": 500,
+    "rateOfFire": 0.75,
+    "projectileSprite": "Lasers/laserRed01",
+    "hitCost": -10
   }
 }

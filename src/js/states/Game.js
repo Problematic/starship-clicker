@@ -1,5 +1,7 @@
 var Phaser = require('phaser');
 var Starship = require('../entities/Starship');
+var EnemyStarship = require('../entities/EnemyStarship');
+var Projectile = require('../entities/Projectile');
 
 function GameState () {}
 
@@ -7,7 +9,7 @@ GameState.prototype = {
     create: function onCreate (game) {
         console.log(game);
 
-        this.config = game.cache.getJSON('game-config');
+        game.config = this.config = game.cache.getJSON('game-config');
 
         // game.world.setBounds(-10000, -10000, 10000, 10000);
 
@@ -29,13 +31,12 @@ GameState.prototype = {
         }, this);
 
         this.projectiles = game.add.group(game.world, 'projectiles', false, true);
+        this.projectiles.classType = Projectile;
         this.projectiles.createMultiple(50, 'sprites', 'Lasers/laserBlue01');
-        this.projectiles.forEach(function (sprite) {
-            sprite.anchor.setTo(0.5);
-            sprite.rotationOffset = Math.PI * 1.5;
-            sprite.checkWorldBounds = true;
-            sprite.outOfBoundsKill = true;
-        });
+
+        this.enemyProjectiles = game.add.group(game.world, 'enemyProjectiles', false, true);
+        this.enemyProjectiles.classType = Projectile;
+        this.enemyProjectiles.createMultiple(100, 'sprites', 'Lasers/laserRed01');
 
         this.player = new Starship(game, game.camera.view.centerX, game.camera.view.centerY, 'sprites', 'playerShip3_red');
         this.player.scale.setTo(0.33);
@@ -45,11 +46,13 @@ GameState.prototype = {
         this.player.body.collideWorldBounds = true;
         this.player.nextShotAt = game.time.time;
         this.player.creds = 0;
+        this.player.target = game.input.activePointer;
+        this.player.projectiles = this.projectiles;
 
         // game.camera.follow(this.player);
 
         this.enemies = game.add.group(game.world, 'enemies');
-        this.enemies.classType = Starship;
+        this.enemies.classType = EnemyStarship;
         this.enemies.createMultiple(10, 'sprites', 'Enemies/enemyBlack1');
         this.enemies.forEach(function (enemy) {
             enemy.scale.setTo(0.33);
@@ -59,6 +62,7 @@ GameState.prototype = {
             enemy.body.maxVelocity.setTo(100);
             enemy.body.collideWorldBounds = true;
             enemy.target = this.player;
+            enemy.projectiles = this.enemyProjectiles;
 
             enemy.events.onKilled.add(function (enemy) {
                 var ct = this.combatTextPool.getFirstDead();
@@ -81,7 +85,7 @@ GameState.prototype = {
         }, this);
 
         this.combatTextPool = game.add.group(game.world, 'combatText');
-        this.combatTextPool.createMultiple(10);
+        this.combatTextPool.createMultiple(25);
         this.combatTextPool.forEach(function (sprite) {
             sprite.text = game.add.text(0, 0, '', { fill: 'white', font: '24px kenvector_futureregular' });
             sprite.addChild(sprite.text);
@@ -112,19 +116,31 @@ GameState.prototype = {
             this.game.plugins.juicy.shake(16, 20);
             this.screenFlash.flash(0.05, 16);
         }, null, this);
+        game.physics.arcade.overlap(this.enemyProjectiles, this.player, function (player, projectile) {
+            var ct = this.combatTextPool.getFirstDead();
+            ct.text.setText(this.config.enemy.hitCost.toSignedString());
+            ct.reset(player.x, player.y);
+            var tween = game.add.tween(ct);
+            tween.to({
+                y: '-50',
+                x: '-50',
+                alpha: 0
+            }, 1000, 'Circ.easeOut');
+            tween.onComplete.add(function () {
+                ct.kill();
+                ct.alpha = 1;
+            });
+            tween.start();
+
+            this.player.creds += this.config.enemy.hitCost;
+
+            projectile.kill();
+            this.game.plugins.juicy.shake(24, 25);
+            this.screenFlash.flash(0.25, 16);
+        }, null, this);
 
         if (game.input.activePointer.isDown) {
-            if (this.player.nextShotAt > game.time.time) { return; }
-
-            var projectile = this.projectiles.getFirstDead();
-            var rotation = this.game.math.angleBetween(this.player.x, this.player.y, game.input.activePointer.x, game.input.activePointer.y);
-            var sep = new Phaser.Point(this.player.x, this.player.y);
-            sep.rotate(sep.x, sep.y, rotation, false, 32);
-
-            projectile.rotation = rotation - projectile.rotationOffset;
-            projectile.reset(sep.x, sep.y);
-            this.game.physics.arcade.velocityFromRotation(rotation, this.config.player.projectileSpeed, projectile.body.velocity);
-            this.player.nextShotAt = game.time.time + (1000 / this.config.player.rateOfFire);
+            this.player.fire();
         }
 
         // this.background.tilePosition.x -= this.player.deltaX * 1.5;
@@ -138,6 +154,7 @@ GameState.prototype = {
                     continue;
                 }
                 enemy.reset(p.x, p.y);
+                enemy.revive();
                 var explosion = this.explosions.getFirstDead();
                 explosion.reset(enemy.x, enemy.y);
                 explosion.animations.play('burst');
@@ -153,7 +170,7 @@ GameState.prototype = {
         }
 
         if (this.controls.up.isDown) {
-            game.physics.arcade.accelerationFromRotation(this.player.rotation - this.player.rotationOffset, 500, this.player.body.acceleration);
+            game.physics.arcade.accelerationFromRotation(this.player.rotation - this.player.rotationOffset, this.config.player.acceleration, this.player.body.acceleration);
         } else {
             this.player.body.acceleration.setTo(0);
         }

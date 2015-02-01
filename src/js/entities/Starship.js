@@ -1,4 +1,5 @@
 var Phaser = require('phaser');
+var Projectile = require('./Projectile');
 
 function Starship (game, x, y, key, frame) {
     Phaser.Sprite.call(this, game, x, y, key, frame);
@@ -7,26 +8,31 @@ function Starship (game, x, y, key, frame) {
     this.anchor.setTo(0.5);
     game.physics.enable(this, Phaser.Physics.ARCADE);
 
-    this.gameConfig = game.cache.getJSON('game-config');
+    this.nextShotAt = game.time.time;
+
+    this.shipType = this.shipType || 'player';
 }
 
 Starship.prototype = Object.create(Phaser.Sprite.prototype);
 Starship.prototype.constructor = Starship;
 
 Starship.prototype.target = null;
+Starship.prototype.shipType = null;
 
-Starship.prototype.update = function () {
-    if (this.target !== null) {
-        var distance = this.game.math.distance(this.x, this.y, this.target.x, this.target.y);
-        var rotation = this.game.math.angleBetween(this.x, this.y, this.target.x, this.target.y);
-        this.rotation = rotation - this.rotationOffset;
+Starship.prototype.fire = function (target) {
+    if (this.nextShotAt > this.game.time.time) { return; }
 
-        if (distance > this.gameConfig.enemy.minimumDistance) {
-            this.game.physics.arcade.velocityFromRotation(rotation, this.gameConfig.enemy.minimumDistance, this.body.velocity);
-        } else {
-            this.body.velocity.setTo(0, 0);
-        }
-    }
+    target = target || this.target;
+
+    var projectile = this.projectiles.getFirstDead();
+    var rotation = this.game.math.angleBetween(this.x, this.y, target.x, target.y);
+    var sep = new Phaser.Point(this.x, this.y);
+    sep.rotate(sep.x, sep.y, rotation, false, 32);
+
+    projectile.rotation = rotation - projectile.rotationOffset;
+    projectile.reset(sep.x, sep.y);
+    this.game.physics.arcade.velocityFromRotation(rotation, this.game.config[this.shipType].projectileSpeed, projectile.body.velocity);
+    this.nextShotAt = this.game.time.time + (1000 / this.game.config[this.shipType].rateOfFire);
 };
 
 module.exports = Starship;
