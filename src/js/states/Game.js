@@ -107,7 +107,7 @@ GameState.prototype = {
     },
     update: function onUpdate (game) {
         game.physics.arcade.collide(this.player, this.enemies);
-        game.physics.arcade.collide(this.enemies, this.enemies);
+        game.physics.arcade.collide(this.enemies);
         game.physics.arcade.overlap(this.projectiles, this.enemies, function (projectile, enemy) {
             var explosion = this.explosions.getFirstDead();
             explosion.reset(enemy.x, enemy.y);
