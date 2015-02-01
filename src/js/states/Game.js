@@ -10,11 +10,6 @@ GameState.prototype = {
         this.config = game.cache.getJSON('game-config');
 
         // game.world.setBounds(-10000, -10000, 10000, 10000);
-        this.audio = {
-            'retro-rumble1': game.add.audio('retro-rumble1'),
-            'retro-rumble2': game.add.audio('retro-rumble2'),
-            'retro-rumble3': game.add.audio('retro-rumble3')
-        };
 
         this.background = game.add.tileSprite(-32, -32, game.stage.width + 64, game.stage.width + 64, 'starfield-blue');
 
