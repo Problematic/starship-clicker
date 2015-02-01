@@ -7,7 +7,7 @@ GameState.prototype = {
     create: function onCreate (game) {
         console.log(game);
 
-        this.gameConfig = game.cache.getJSON('game-config');
+        this.config = game.cache.getJSON('game-config');
 
         // game.world.setBounds(-10000, -10000, 10000, 10000);
         this.audio = {
@@ -46,7 +46,7 @@ GameState.prototype = {
         this.player.scale.setTo(0.33);
         this.player.rotationOffset = Math.PI / 2;
         this.player.body.drag.setTo(100);
-        this.player.body.maxVelocity.setTo(this.gameConfig.player.maxVelocity);
+        this.player.body.maxVelocity.setTo(this.config.player.maxVelocity);
         this.player.body.collideWorldBounds = true;
         this.player.nextShotAt = game.time.time;
 
@@ -97,8 +97,8 @@ GameState.prototype = {
 
             projectile.rotation = rotation - projectile.rotationOffset;
             projectile.reset(sep.x, sep.y);
-            this.game.physics.arcade.velocityFromRotation(rotation, this.gameConfig.player.projectileSpeed, projectile.body.velocity);
-            this.player.nextShotAt = game.time.time + (1000 / this.gameConfig.player.rateOfFire);
+            this.game.physics.arcade.velocityFromRotation(rotation, this.config.player.projectileSpeed, projectile.body.velocity);
+            this.player.nextShotAt = game.time.time + (1000 / this.config.player.rateOfFire);
         }
 
         // this.background.tilePosition.x -= this.player.deltaX * 1.5;
@@ -107,7 +107,11 @@ GameState.prototype = {
         if (this.enemies.countLiving() < 5) {
             for (var i = 0; i < game.rnd.integerInRange(0, 3); i++) {
                 var enemy = this.enemies.getFirstDead();
-                enemy.reset(game.camera.view.randomX, game.camera.view.randomY);
+                var p = new Phaser.Point(game.camera.view.randomX, game.camera.view.randomY);
+                if (game.math.distance(p.x, p.y, this.player.x, this.player.y) < this.config.enemy.minimumDistance) {
+                    continue;
+                }
+                enemy.reset(p.x, p.y);
                 var explosion = this.explosions.getFirstDead();
                 explosion.reset(enemy.x, enemy.y);
                 explosion.animations.play('burst');

@@ -3,5 +3,9 @@
     "maxVelocity": 250,
     "projectileSpeed": 1000,
     "rateOfFire": 5
+  },
+  "enemy": {
+    "minimumDistance": 75,
+    "maxVelocity": 200
   }
 }

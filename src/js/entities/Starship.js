@@ -6,6 +6,8 @@ function Starship (game, x, y, key, frame) {
 
     this.anchor.setTo(0.5);
     game.physics.enable(this, Phaser.Physics.ARCADE);
+
+    this.gameConfig = game.cache.getJSON('game-config');
 }
 
 Starship.prototype = Object.create(Phaser.Sprite.prototype);
@@ -19,8 +21,8 @@ Starship.prototype.update = function () {
         var rotation = this.game.math.angleBetween(this.x, this.y, this.target.x, this.target.y);
         this.rotation = rotation - this.rotationOffset;
 
-        if (distance > 75) {
-            this.game.physics.arcade.velocityFromRotation(rotation, 200, this.body.velocity);
+        if (distance > this.gameConfig.enemy.minimumDistance) {
+            this.game.physics.arcade.velocityFromRotation(rotation, this.gameConfig.enemy.minimumDistance, this.body.velocity);
         } else {
             this.body.velocity.setTo(0, 0);
         }
