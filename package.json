@@ -1,0 +1,35 @@
+{
+  "name": "starship-clicker",
+  "version": "0.2.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack --colors --progress"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Problematic/starship-clicker.git"
+  },
+  "author": "Derek Stobbe",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Problematic/starship-clicker/issues"
+  },
+  "homepage": "https://github.com/Problematic/starship-clicker",
+  "devDependencies": {
+    "css-loader": "^0.9.1",
+    "exports-loader": "^0.6.2",
+    "file-loader": "^0.8.1",
+    "html-webpack-plugin": "^1.1.0",
+    "json-loader": "^0.5.1",
+    "script-loader": "^0.6.1",
+    "source-map-loader": "^0.1.3",
+    "style-loader": "^0.8.3",
+    "url-loader": "^0.5.5",
+    "webpack": "^1.5.3"
+  },
+  "dependencies": {
+    "phaser": "^2.2.2"
+  }
+}

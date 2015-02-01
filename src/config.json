@@ -1,0 +1,7 @@
+{
+  "player": {
+    "maxVelocity": 250,
+    "projectileSpeed": 1000,
+    "rateOfFire": 5
+  }
+}
