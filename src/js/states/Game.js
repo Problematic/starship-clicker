@@ -98,9 +98,7 @@ GameState.prototype = {
             up: game.input.keyboard.addKey(Phaser.Keyboard.W),
             down: game.input.keyboard.addKey(Phaser.Keyboard.S),
             left: game.input.keyboard.addKey(Phaser.Keyboard.A),
-            right: game.input.keyboard.addKey(Phaser.Keyboard.D),
-            strafeLeft: game.input.keyboard.addKey(Phaser.Keyboard.Q),
-            strafeRight: game.input.keyboard.addKey(Phaser.Keyboard.E)
+            right: game.input.keyboard.addKey(Phaser.Keyboard.D)
         };
 
         var credTextStyle = { fill: 'white', font: '18px kenvector_futureregular' };
@@ -171,28 +169,22 @@ GameState.prototype = {
         var rotation = this.game.math.angleBetween(this.player.x, this.player.y, this.player.target.x, this.player.target.y);
         this.player.rotation = rotation + this.player.rotationOffset;
 
-        var longitudinalAcc = new Phaser.Point(0, 0);
-        game.physics.arcade.accelerationFromRotation(this.player.rotation - this.player.rotationOffset, this.config.player.acceleration, longitudinalAcc);
+        var acc = new Phaser.Point(0, 0);
         if (this.controls.up.isDown) {
-            this.player.body.acceleration.setTo(
-                longitudinalAcc.x, longitudinalAcc.y
-            );
-        } else if (this.controls.down.isDown) {
-            this.player.body.acceleration.setTo(
-                longitudinalAcc.x * -1, longitudinalAcc.y * -1
-            );
-        }else {
-            this.player.body.acceleration.setTo(0);
+            acc.add(0, -1);
         }
-
-        var lateralAcc = new Phaser.Point(0, 0);
+        if (this.controls.down.isDown) {
+            acc.add(0, 1);
+        }
         if (this.controls.left.isDown) {
-            game.physics.arcade.accelerationFromRotation(this.player.rotation - this.player.rotationOffset - (Math.PI /2), this.config.player.lateralAcceleration, lateralAcc);
-        } if (this.controls.right.isDown) {
-            game.physics.arcade.accelerationFromRotation(this.player.rotation - this.player.rotationOffset + (Math.PI /2), this.config.player.lateralAcceleration, lateralAcc);
+            acc.add(-1, 0);
+        }
+        if (this.controls.right.isDown) {
+            acc.add(1, 0);
         }
 
-        Phaser.Point.add(this.player.body.acceleration, lateralAcc, this.player.body.acceleration);
+        acc.multiply(this.game.config.player.acceleration, this.game.config.player.acceleration);
+        this.player.body.acceleration.setTo(acc.x, acc.y);
     },
     render: function onRender (game) {
         this.credText.setText(this.player.creds.toString());
