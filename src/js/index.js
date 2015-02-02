@@ -4,7 +4,7 @@ require('../css/fonts.css');
 window.addEventListener('load', function () {
     var Phaser = require('phaser');
 
-    var game = new Phaser.Game(window.innerWidth, window.innerHeight, Phaser.AUTO, '');
+    var game = new Phaser.Game(window.innerWidth, window.innerHeight, Phaser.AUTO, 'game');
 
     game.state.add('Boot', require('./states/Boot'));
     game.state.add('Preload', require('./states/Preload'));

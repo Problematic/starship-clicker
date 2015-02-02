@@ -31,7 +31,8 @@ module.exports = {
         new webpack.optimize.OccurenceOrderPlugin(true),
         new webpack.optimize.CommonsChunkPlugin('vendor', 'vendor.bundle.js'),
         new (require('html-webpack-plugin'))({
-            title: 'Starship Clicker'
+            title: 'Starship Clicker',
+            template: 'src/index.html'
         })
     ]
 };

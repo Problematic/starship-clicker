@@ -110,6 +110,8 @@ GameState.prototype = {
         var credTextStyle = { fill: 'white', font: '18px kenvector_futureregular' };
         this.credText = game.add.text(10, 10, this.player.creds.toString(), credTextStyle);
 
+        this.cursor = game.add.sprite(0, 0, 'ui', 'crossair_white');
+        this.cursor.anchor.setTo(0.5);
     },
     update: function onUpdate (game) {
         game.physics.arcade.collide(this.player, this.enemies);
@@ -194,6 +196,10 @@ GameState.prototype = {
         this.credText.setText(this.player.creds.toString());
         // game.debug.cameraInfo(game.camera, 10, 20);
         // game.debug.spriteInfo(this.player, 10, 125);
+
+        this.cursor.position.setTo(
+            game.input.activePointer.x, game.input.activePointer.y
+        );
     }
 };
 

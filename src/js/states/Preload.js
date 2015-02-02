@@ -6,6 +6,7 @@ PreloadState.prototype = {
 
         game.load.atlasJSONArray('sprites', require('../../assets/spritesheet.png'), require('file!../../assets/spritesheet.json'));
         game.load.atlasJSONArray('explosions', require('../../assets/spritesheet-explosion.png'), require('file!../../assets/spritesheet-explosion.json'));
+        game.load.atlasJSONArray('ui', require('../../assets/spritesheet-ui.png'), require('file!../../assets/spritesheet-ui.json'));
 
         game.load.json('game-config', require('file!../../config.json'));
     },
