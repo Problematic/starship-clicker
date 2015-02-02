@@ -5,6 +5,7 @@
     "rateOfFire": 5,
     "acceleration": 500,
     "lateralAcceleration": 500,
+    "projectileColor": "Blue",
     "projectileSprite": "Lasers/laserBlue01",
     "projectileDamage": 1
   },
@@ -14,6 +15,7 @@
     "credValue": 10,
     "projectileSpeed": 500,
     "rateOfFire": 0.5,
+    "projectileColor": "Red",
     "projectileSprite": "Lasers/laserRed01",
     "hitCost": -10,
     "health": 1
