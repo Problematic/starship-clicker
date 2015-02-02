@@ -167,9 +167,17 @@ GameState.prototype = {
         var rotation = this.game.math.angleBetween(this.player.x, this.player.y, this.player.target.x, this.player.target.y);
         this.player.rotation = rotation + this.player.rotationOffset;
 
+        var longitudinalAcc = new Phaser.Point(0, 0);
+        game.physics.arcade.accelerationFromRotation(this.player.rotation - this.player.rotationOffset, this.config.player.acceleration, longitudinalAcc);
         if (this.controls.up.isDown) {
-            game.physics.arcade.accelerationFromRotation(this.player.rotation - this.player.rotationOffset, this.config.player.acceleration, this.player.body.acceleration);
-        } else {
+            this.player.body.acceleration.setTo(
+                longitudinalAcc.x, longitudinalAcc.y
+            );
+        } else if (this.controls.down.isDown) {
+            this.player.body.acceleration.setTo(
+                longitudinalAcc.x * -1, longitudinalAcc.y * -1
+            );
+        }else {
             this.player.body.acceleration.setTo(0);
         }
 
