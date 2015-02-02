@@ -19,6 +19,8 @@ Starship.prototype.constructor = Starship;
 Starship.prototype.target = null;
 Starship.prototype.shipType = null;
 
+Starship.prototype.update = function () {};
+
 Starship.prototype.fire = function (target) {
     if (this.nextShotAt > this.game.time.time) { return; }
 

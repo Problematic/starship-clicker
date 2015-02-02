@@ -159,7 +159,7 @@ GameState.prototype = {
                     continue;
                 }
                 enemy.reset(p.x, p.y);
-                enemy.revive(game.config.enemy.health);
+                enemy.revive(enemy.maxHealth);
                 var explosion = this.explosions.getFirstDead();
                 explosion.reset(enemy.x, enemy.y);
                 explosion.animations.play('burst');
