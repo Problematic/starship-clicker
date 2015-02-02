@@ -32,11 +32,7 @@ GameState.prototype = {
 
         this.projectiles = game.add.group(game.world, 'projectiles', false, true);
         this.projectiles.classType = Projectile;
-        this.projectiles.createMultiple(50, 'sprites', 'Lasers/laserBlue01');
-
-        this.enemyProjectiles = game.add.group(game.world, 'enemyProjectiles', false, true);
-        this.enemyProjectiles.classType = Projectile;
-        this.enemyProjectiles.createMultiple(100, 'sprites', 'Lasers/laserRed01');
+        this.projectiles.createMultiple(150, 'sprites');
 
         this.player = new Starship(game, game.camera.view.centerX, game.camera.view.centerY, 'sprites', 'playerShip3_red');
         this.player.scale.setTo(0.33);
@@ -62,7 +58,7 @@ GameState.prototype = {
             enemy.body.maxVelocity.setTo(100);
             enemy.body.collideWorldBounds = true;
             enemy.target = this.player;
-            enemy.projectiles = this.enemyProjectiles;
+            enemy.projectiles = this.projectiles;
 
             enemy.events.onKilled.add(function (enemy) {
                 var explosion = this.explosions.getFirstDead();
@@ -116,12 +112,18 @@ GameState.prototype = {
     update: function onUpdate (game) {
         game.physics.arcade.collide(this.player, this.enemies);
         game.physics.arcade.collide(this.enemies);
+
         game.physics.arcade.overlap(this.projectiles, this.enemies, function (projectile, enemy) {
+            if (projectile.owner.shipType === 'enemy') { return; }
+
             enemy.damage(this.game.config.player.projectileDamage);
             projectile.kill();
             this.game.plugins.juicy.shake(16, 5);
         }, null, this);
-        game.physics.arcade.overlap(this.enemyProjectiles, this.player, function (player, projectile) {
+
+        game.physics.arcade.overlap(this.projectiles, this.player, function (player, projectile) {
+            if (projectile.owner.shipType === 'player') { return; }
+
             var ct = this.combatTextPool.getFirstDead();
             ct.text.setText(this.config.enemy.hitCost.toSignedString());
             ct.reset(player.x, player.y);

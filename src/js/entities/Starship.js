@@ -27,6 +27,7 @@ Starship.prototype.fire = function (target) {
     target = target || this.target;
 
     var projectile = this.projectiles.getFirstDead();
+    projectile.owner = this;
     var rotation = this.game.math.angleBetween(this.x, this.y, target.x, target.y);
     var sep = new Phaser.Point(this.x, this.y);
     sep.rotate(sep.x, sep.y, rotation, false, 16);
