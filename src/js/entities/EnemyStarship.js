@@ -13,7 +13,7 @@ function EnemyStarship (game, x, y, key, frame) {
         this.healthbar.visible = true;
     }, this);
 
-    this.maxHealth = game.config[this.shipType].health;
+    this.maxHealth = this.shipConfig.health;
 }
 
 EnemyStarship.prototype = Object.create(Starship.prototype);
@@ -31,14 +31,18 @@ EnemyStarship.prototype.update = function () {
 
     var width = this.width;
 
-    this.healthbar.beginFill(0x000000);
     this.healthbar.lineStyle(1, 0xffffff, 1);
+
+    this.healthbar.beginFill(0x000000);
     this.healthbar.drawRect(this.width * 0.75, -1 * this.height * 0.5, width, 3);
     this.healthbar.endFill();
 
     this.healthbar.beginFill(0xff0000);
-    this.healthbar.lineStyle(1, 0xffffff, 1);
     this.healthbar.drawRect(this.width * 0.75, -1 * this.height * 0.5, width * (this.health / this.maxHealth), 3);
+    this.healthbar.endFill();
+
+    this.healthbar.beginFill(0x0000ff);
+    this.healthbar.drawRect(this.width * 0.75, -1 * this.height * 0.5, width * (this.shield.health / this.shipConfig.shield), 3);
     this.healthbar.endFill();
 
     if (this.target !== null) {

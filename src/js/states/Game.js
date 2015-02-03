@@ -35,8 +35,6 @@ GameState.prototype = {
         this.projectiles.createMultiple(150, 'sprites');
 
         this.player = new Starship(game, game.camera.view.centerX, game.camera.view.centerY, 'sprites', 'playerShip3_red');
-        this.player.scale.setTo(0.33);
-        this.player.rotationOffset = Math.PI / 2;
         this.player.body.drag.setTo(100);
         this.player.body.maxVelocity.setTo(this.config.player.maxVelocity);
         this.player.body.collideWorldBounds = true;
@@ -51,9 +49,6 @@ GameState.prototype = {
         this.enemies.classType = EnemyStarship;
         this.enemies.createMultiple(10, 'sprites', 'Enemies/enemyBlack1');
         this.enemies.forEach(function (enemy) {
-            enemy.scale.setTo(0.33);
-            enemy.body.setSize(enemy.width, enemy.height);
-            enemy.rotationOffset = Math.PI / 2;
             enemy.body.drag.setTo(30);
             enemy.body.maxVelocity.setTo(100);
             enemy.body.collideWorldBounds = true;
@@ -122,6 +117,14 @@ GameState.prototype = {
         game.physics.arcade.overlap(this.projectiles, this.player, function (player, projectile) {
             if (projectile.owner.shipType === 'player') { return; }
 
+            projectile.kill();
+            this.game.plugins.juicy.shake(24, 25);
+            this.screenFlash.flash(0.25, 16);
+
+            this.player.shield.damage(this.game.config.enemy.projectileDamage);
+
+            if (this.player.shield.health > 0) { return; }
+
             var ct = this.combatTextPool.getFirstDead();
             ct.text.setText(this.config.enemy.hitCost.toSignedString());
             ct.reset(player.x, player.y);
@@ -138,10 +141,6 @@ GameState.prototype = {
             tween.start();
 
             this.player.creds += this.config.enemy.hitCost;
-
-            projectile.kill();
-            this.game.plugins.juicy.shake(24, 25);
-            this.screenFlash.flash(0.25, 16);
         }, null, this);
 
         if (game.input.activePointer.isDown) {
@@ -190,6 +189,11 @@ GameState.prototype = {
         this.credText.setText(this.player.creds.toString());
         // game.debug.cameraInfo(game.camera, 10, 20);
         // game.debug.spriteInfo(this.player, 10, 125);
+
+        // game.debug.body(this.player);
+        // this.enemies.forEachAlive(function (sprite) {
+        //     game.debug.body(sprite);
+        // });
 
         this.cursor.position.setTo(
             game.input.activePointer.x, game.input.activePointer.y

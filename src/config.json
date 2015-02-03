@@ -1,4 +1,18 @@
 {
+  "sprites": {
+    "playerShip3_red": {
+      "anchor": 0.5,
+      "rotationOffsetMod": 0.5,
+      "scale": [0.33, 0.33],
+      "flip": [1, 1]
+    },
+    "Enemies/enemyBlack1": {
+      "anchor": 0.5,
+      "rotationOffsetMod": 0.5,
+      "scale": [0.33, 0.33],
+      "flip": [1, -1]
+    }
+  },
   "player": {
     "maxVelocity": 250,
     "projectileSpeed": 1000,
@@ -7,7 +21,9 @@
     "lateralAcceleration": 500,
     "projectileColor": "Blue",
     "projectileSprite": "Lasers/laserBlue01",
-    "projectileDamage": 1
+    "projectileDamage": 1,
+    "shield": 2,
+    "shieldRegenInterval": 3000
   },
   "enemy": {
     "minimumDistance": 75,
@@ -17,7 +33,10 @@
     "rateOfFire": 0.5,
     "projectileColor": "Red",
     "projectileSprite": "Lasers/laserRed01",
+    "projectileDamage": 1,
     "hitCost": -10,
-    "health": 1
+    "health": 2,
+    "shield": 3,
+    "shieldRegenInterval": 3000
   }
 }

@@ -1,16 +1,38 @@
 var Phaser = require('phaser');
 var Projectile = require('./Projectile');
+var Shield = require('./Shield');
 
 function Starship (game, x, y, key, frame) {
     Phaser.Sprite.call(this, game, x, y, key, frame);
     game.add.existing(this);
 
+    this.spriteConfig = this.game.config.sprites[frame];
+
     this.anchor.setTo(0.5);
+
+    var scale = this.spriteConfig.scale;
+    this.scale.setTo(scale[0], scale[1]);
+
     game.physics.enable(this, Phaser.Physics.ARCADE);
 
     this.nextShotAt = game.time.time;
-
+    this.rotationOffset = Math.PI * this.spriteConfig.rotationOffsetMod;
     this.shipType = this.shipType || 'player';
+
+    this.shipConfig = this.game.config[this.shipType];
+
+    this.shield = new Shield(game, 0, 0);
+    this.shield.owner = this;
+    this.shield.regenInterval = this.shipConfig.shieldRegenInterval;
+    this.shield.health = this.shipConfig.shield;
+    this.shield.maxHealth = this.shipConfig.shield;
+    this.shield.scale.x *= this.spriteConfig.flip[0];
+    this.shield.scale.y *= this.spriteConfig.flip[1];
+    this.addChild(this.shield);
+
+    this.events.onRevived.add(function () {
+        this.shield.revive(this.shipConfig.shield);
+    }, this);
 }
 
 Starship.prototype = Object.create(Phaser.Sprite.prototype);
@@ -19,7 +41,18 @@ Starship.prototype.constructor = Starship;
 Starship.prototype.target = null;
 Starship.prototype.shipType = null;
 
-Starship.prototype.update = function () {};
+Starship.prototype.update = function () {
+    this.shield.update();
+};
+
+Starship.prototype.damage = function (amount) {
+    var shieldHealth = this.shield.health;
+    this.shield.damage(amount);
+
+    if (amount - shieldHealth > 0) {
+        Phaser.Sprite.prototype.damage.call(this, amount - shieldHealth);
+    }
+};
 
 Starship.prototype.fire = function (target) {
     if (this.nextShotAt > this.game.time.time) { return; }
