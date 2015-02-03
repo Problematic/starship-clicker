@@ -30,7 +30,7 @@ GameState.prototype = {
             anim.killOnComplete = true;
         }, this);
 
-        this.projectiles = game.add.group(game.world, 'projectiles', false, true);
+        this.projectiles = game.add.group(game.world, 'projectiles');
         this.projectiles.classType = Projectile;
         this.projectiles.createMultiple(150, 'sprites');
 

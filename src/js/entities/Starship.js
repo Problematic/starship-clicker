@@ -34,6 +34,7 @@ Starship.prototype.fire = function (target) {
 
     projectile.rotation = rotation - projectile.rotationOffset;
     projectile.reset(sep.x, sep.y);
+    projectile.revive();
     this.game.physics.arcade.velocityFromRotation(rotation, this.game.config[this.shipType].projectileSpeed, projectile.body.velocity);
     this.nextShotAt = this.game.time.time + (1000 / this.game.config[this.shipType].rateOfFire);
 
