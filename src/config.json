@@ -23,7 +23,9 @@
     "projectileSprite": "Lasers/laserBlue01",
     "projectileDamage": 1,
     "shield": 2,
-    "shieldRegenInterval": 3000
+    "shieldRegenInterval": 3000,
+    "critChance": 0.2,
+    "critMultiplier": 2
   },
   "enemy": {
     "minimumDistance": 75,
@@ -37,6 +39,8 @@
     "hitCost": -10,
     "health": 2,
     "shield": 3,
-    "shieldRegenInterval": 3000
+    "shieldRegenInterval": 3000,
+    "critChance": 0,
+    "critMultiplier": 1
   }
 }

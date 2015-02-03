@@ -109,7 +109,9 @@ GameState.prototype = {
         game.physics.arcade.overlap(this.projectiles, this.enemies, function (projectile, enemy) {
             if (projectile.owner.shipType === 'enemy') { return; }
 
-            enemy.damage(this.game.config.player.projectileDamage);
+            // TODO: refactor this into the projectile itself
+            var damage = this.game.config.player.projectileDamage * (Phaser.Math.chanceRoll(this.game.config.player.critChance * 100) ? this.game.config.player.critMultiplier : 1);
+            enemy.damage(damage);
             projectile.kill();
             this.game.plugins.juicy.shake(16, 5);
         }, null, this);

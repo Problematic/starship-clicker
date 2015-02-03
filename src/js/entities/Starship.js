@@ -47,10 +47,11 @@ Starship.prototype.update = function () {
 
 Starship.prototype.damage = function (amount) {
     var shieldHealth = this.shield.health;
-    this.shield.damage(amount);
+    this.shield.damage(Math.min(shieldHealth, amount));
+    amount -= shieldHealth;
 
-    if (amount - shieldHealth > 0) {
-        Phaser.Sprite.prototype.damage.call(this, amount - shieldHealth);
+    if (amount > 0) {
+        Phaser.Sprite.prototype.damage.call(this, amount);
     }
 };
 
