@@ -5,6 +5,7 @@ module.exports = {
     Faction: require('./Faction'),
     HealthBar: require('./HealthBar'),
     Invincible: require('./Invincible'),
+    LockTo: require('./LockTo'),
     Ownable: require('./Ownable'),
     PlayerBrain: require('./PlayerBrain'),
     Shield: require('./Shield'),
