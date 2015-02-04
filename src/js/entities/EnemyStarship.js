@@ -1,3 +1,4 @@
+var inherits = require('inherits');
 var Starship = require('./Starship');
 
 function EnemyStarship (game, x, y, key, frame) {
@@ -16,8 +17,7 @@ function EnemyStarship (game, x, y, key, frame) {
     this.maxHealth = this.shipConfig.health;
 }
 
-EnemyStarship.prototype = Object.create(Starship.prototype);
-EnemyStarship.prototype.constructor = EnemyStarship;
+inherits(EnemyStarship, Starship);
 
 EnemyStarship.prototype.update = function () {
     Starship.prototype.update.call(this);

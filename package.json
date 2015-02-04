@@ -22,6 +22,7 @@
     "exports-loader": "^0.6.2",
     "file-loader": "^0.8.1",
     "html-webpack-plugin": "^1.1.0",
+    "inherits": "^2.0.1",
     "json-loader": "^0.5.1",
     "script-loader": "^0.6.1",
     "source-map-loader": "^0.1.3",

@@ -1,16 +1,28 @@
 {
   "sprites": {
     "playerShip3_red": {
-      "anchor": 0.5,
+      "anchor": [0.5, 0.5],
       "rotationOffsetMod": 0.5,
       "scale": [0.33, 0.33],
       "flip": [1, 1]
     },
     "Enemies/enemyBlack1": {
-      "anchor": 0.5,
+      "anchor": [0.5, 0.5],
       "rotationOffsetMod": 0.5,
       "scale": [0.33, 0.33],
       "flip": [1, -1]
+    },
+    "projectile": {
+      "anchor": [0.5, 0.5],
+      "rotationOffsetMod": 1.5,
+      "scale": [1, 1],
+      "flip": [1, 1]
+    },
+    "Effects/shield3": {
+      "anchor": [0.5, 0.5],
+      "rotationOffsetMod": 0,
+      "scale": [1, 1],
+      "flip": [1, 1]
     }
   },
   "player": {

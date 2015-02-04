@@ -1,17 +1,16 @@
+var inherits = require('inherits');
 var Phaser = require('phaser');
+var Entity = require('../ecs/Entity');
+var components = require('../components');
 
 function Projectile (game, x, y, key, frame) {
-    Phaser.Sprite.call(this, game, x, y, key, frame);
-    game.add.existing(this);
+    Entity.call(this, game, x, y, key, frame);
 
-    this.game.physics.enable(this, Phaser.Physics.ARCADE);
+    this.addComponent(components.ArcadeBody);
+    this.addComponent(components.Ownable);
 
-    this.anchor.setTo(0.5);
-    this.rotationOffset = Math.PI * 1.5;
     this.checkWorldBounds = true;
     this.outOfBoundsKill = true;
-
-    this._owner = null;
 
     this.events.onRevived.add(function () {
         var dim = this.height / 4;
@@ -21,19 +20,12 @@ function Projectile (game, x, y, key, frame) {
 
         this.body.setSize(dim, dim, sep.x, sep.y);
     }, this);
+
+    this.events.onOwnerChanged.add(function (owner) {
+        this.frameName = this.game.config[owner.shipType].projectileSprite;
+    }, this);
 }
 
-Projectile.prototype = Object.create(Phaser.Sprite.prototype);
-Projectile.prototype.constructor = Projectile;
-
-Object.defineProperty(Projectile.prototype, 'owner', {
-    get: function () {
-        return this._owner;
-    },
-    set: function (value) {
-        this._owner = value;
-        this.frameName = this.game.config[this._owner.shipType].projectileSprite;
-    }
-});
+inherits(Projectile, Entity);
 
 module.exports = Projectile;

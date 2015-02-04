@@ -2,6 +2,7 @@ var Phaser = require('phaser');
 var Starship = require('../entities/Starship');
 var EnemyStarship = require('../entities/EnemyStarship');
 var Projectile = require('../entities/Projectile');
+var components = require('../components');
 
 function GameState () {}
 
@@ -32,9 +33,10 @@ GameState.prototype = {
 
         this.projectiles = game.add.group(game.world, 'projectiles');
         this.projectiles.classType = Projectile;
-        this.projectiles.createMultiple(150, 'sprites');
+        this.projectiles.createMultiple(150, 'sprites', 'projectile');
 
         this.player = new Starship(game, game.camera.view.centerX, game.camera.view.centerY, 'sprites', 'playerShip3_red');
+        this.player.addComponent(components.Invincible);
         this.player.body.drag.setTo(100);
         this.player.body.maxVelocity.setTo(this.config.player.maxVelocity);
         this.player.body.collideWorldBounds = true;
@@ -123,7 +125,7 @@ GameState.prototype = {
             this.game.plugins.juicy.shake(24, 25);
             this.screenFlash.flash(0.25, 16);
 
-            this.player.shield.damage(this.game.config.enemy.projectileDamage);
+            this.player.damage(this.game.config.enemy.projectileDamage);
 
             if (this.player.shield.health > 0) { return; }
 

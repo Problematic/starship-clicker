@@ -1,22 +1,18 @@
+var inherits = require('inherits');
 var Phaser = require('phaser');
 var Projectile = require('./Projectile');
 var Shield = require('./Shield');
+var Entity = require('../ecs/Entity');
+var components = require('../components');
 
 function Starship (game, x, y, key, frame) {
-    Phaser.Sprite.call(this, game, x, y, key, frame);
-    game.add.existing(this);
+    Entity.call(this, game, x, y, key, frame);
 
-    this.spriteConfig = this.game.config.sprites[frame];
-
-    this.anchor.setTo(0.5);
-
-    var scale = this.spriteConfig.scale;
-    this.scale.setTo(scale[0], scale[1]);
-
-    game.physics.enable(this, Phaser.Physics.ARCADE);
+    this.addComponent(components.ArcadeBody);
+    this.addComponent(components.TargetingComputer);
+    var dm = this.addComponent(components.DefenseManager);
 
     this.nextShotAt = game.time.time;
-    this.rotationOffset = Math.PI * this.spriteConfig.rotationOffsetMod;
     this.shipType = this.shipType || 'player';
 
     this.shipConfig = this.game.config[this.shipType];
@@ -30,29 +26,19 @@ function Starship (game, x, y, key, frame) {
     this.shield.scale.y *= this.spriteConfig.flip[1];
     this.addChild(this.shield);
 
+    dm.addDefense(this.shield);
+
     this.events.onRevived.add(function () {
         this.shield.revive(this.shipConfig.shield);
     }, this);
 }
 
-Starship.prototype = Object.create(Phaser.Sprite.prototype);
-Starship.prototype.constructor = Starship;
+inherits(Starship, Entity);
 
-Starship.prototype.target = null;
 Starship.prototype.shipType = null;
 
 Starship.prototype.update = function () {
     this.shield.update();
-};
-
-Starship.prototype.damage = function (amount) {
-    var shieldHealth = this.shield.health;
-    this.shield.damage(Math.min(shieldHealth, amount));
-    amount -= shieldHealth;
-
-    if (amount > 0) {
-        Phaser.Sprite.prototype.damage.call(this, amount);
-    }
 };
 
 Starship.prototype.fire = function (target) {

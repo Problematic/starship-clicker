@@ -1,11 +1,13 @@
+var inherits = require('inherits');
 var Phaser = require('phaser');
+var Entity = require('../ecs/Entity');
+var components = require('../components');
 
 function Shield (game, x, y, key, frame) {
-    Phaser.Sprite.call(this, game, x, y, key || 'sprites', frame || 'Effects/shield3');
+    Entity.call(this, game, x, y, key || 'sprites', frame || 'Effects/shield3');
 
-    this.anchor.setTo(0.5);
-
-    this.game.physics.enable(this, Phaser.Physics.ARCADE);
+    this.addComponent(components.ArcadeBody);
+    this.addComponent(components.Ownable);
 
     var anim = this.animations.add('remove', [
         // 'Effects/shield3',
@@ -22,8 +24,7 @@ function Shield (game, x, y, key, frame) {
     this.nextRegenTime = null;
 }
 
-Shield.prototype = Object.create(Phaser.Sprite.prototype);
-Shield.prototype.constructor = Shield;
+inherits(Shield, Entity);
 
 Shield.prototype.damage = function(amount) {
     if (this.alive)
