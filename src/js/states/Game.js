@@ -171,8 +171,8 @@ GameState.prototype = {
         // this.background.tilePosition.x -= this.player.deltaX * 1.5;
         // this.background.tilePosition.y -= this.player.deltaY * 1.5;
 
-        if (this.enemies.countLiving() < 1) {
-            for (var i = 0; i < game.rnd.integerInRange(0, 1); i++) {
+        if (this.enemies.countLiving() < 5) {
+            for (var i = 0; i < game.rnd.integerInRange(0, 3); i++) {
                 var enemy = this.enemies.getFirstDead();
                 var p = new Phaser.Point(game.camera.view.randomX, game.camera.view.randomY);
                 if (game.math.distance(p.x, p.y, this.player.x, this.player.y) < this.config.enemy.minimumDistance) {
