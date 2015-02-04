@@ -37,7 +37,7 @@ DefenseManager.prototype.damage = function (amount) {
         if (amount <= 0) { return; }
     }
 
-    this._cachedDamageFn.call(this.parent, amount);
+    this._cachedDamageFn.call(this.parent, Math.min(this.parent.health, amount));
 };
 
 DefenseManager.prototype.tearDown = function () {

@@ -23,9 +23,11 @@ Entity.prototype.update = function () {
 };
 
 Entity.prototype.addComponent = function (Constructor, data) {
-    for (var i = 0; i < Constructor.requires; i++) {
-        if (!this.hasComponent(Constructor.requires[i])) {
-            this.addComponent(Constructor.requires[i], null);
+    if (Constructor.requires) {
+        for (var i = 0; i < Constructor.requires.length; i++) {
+            if (!this.hasComponent(Constructor.requires[i])) {
+                this.addComponent(Constructor.requires[i], null);
+            }
         }
     }
 
@@ -36,11 +38,11 @@ Entity.prototype.addComponent = function (Constructor, data) {
 };
 
 Entity.prototype.hasComponent = function (Constructor) {
-    return this.components.has(Component);
+    return this.components.has(Constructor);
 };
 
 Entity.prototype.getComponent = function (Constructor) {
-    return this.components.get(Component);
+    return this.components.get(Constructor) || null;
 };
 
 Entity.prototype.removeComponent = function (Constructor) {

@@ -1,6 +1,5 @@
 var Phaser = require('phaser');
 var Starship = require('../entities/Starship');
-var EnemyStarship = require('../entities/EnemyStarship');
 var Projectile = require('../entities/Projectile');
 var components = require('../components');
 
@@ -11,6 +10,13 @@ GameState.prototype = {
         console.log(game);
 
         game.config = this.config = game.cache.getJSON('game-config');
+
+        this.controls = {
+            up: game.input.keyboard.addKey(Phaser.Keyboard.W),
+            down: game.input.keyboard.addKey(Phaser.Keyboard.S),
+            left: game.input.keyboard.addKey(Phaser.Keyboard.A),
+            right: game.input.keyboard.addKey(Phaser.Keyboard.D)
+        };
 
         // game.world.setBounds(-10000, -10000, 10000, 10000);
 
@@ -36,7 +42,17 @@ GameState.prototype = {
         this.projectiles.createMultiple(150, 'sprites', 'projectile');
 
         this.player = new Starship(game, game.camera.view.centerX, game.camera.view.centerY, 'sprites', 'playerShip3_red');
+        this.player.addComponent(components.Faction, {
+            faction: 'player'
+        });
+        this.player.addComponent(components.ShipConfig, {
+            type: 'player'
+        });
+        this.player.addComponent(components.Shield);
         this.player.addComponent(components.Invincible);
+        this.player.addComponent(components.PlayerBrain, {
+            controls: this.controls
+        });
         this.player.body.drag.setTo(100);
         this.player.body.maxVelocity.setTo(this.config.player.maxVelocity);
         this.player.body.collideWorldBounds = true;
@@ -48,9 +64,18 @@ GameState.prototype = {
         // game.camera.follow(this.player);
 
         this.enemies = game.add.group(game.world, 'enemies');
-        this.enemies.classType = EnemyStarship;
+        this.enemies.classType = Starship;
         this.enemies.createMultiple(10, 'sprites', 'Enemies/enemyBlack1');
         this.enemies.forEach(function (enemy) {
+            enemy.addComponent(components.Faction, {
+                faction: 'enemy'
+            });
+            enemy.addComponent(components.ShipConfig, {
+                type: 'enemy'
+            });
+            enemy.addComponent(components.Shield);
+            enemy.addComponent(components.AIBrain);
+            enemy.addComponent(components.HealthBar);
             enemy.body.drag.setTo(30);
             enemy.body.maxVelocity.setTo(100);
             enemy.body.collideWorldBounds = true;
@@ -90,13 +115,6 @@ GameState.prototype = {
             sprite.text = game.add.text(0, 0, '', { fill: 'white', font: '24px kenvector_futureregular' });
             sprite.addChild(sprite.text);
         }, this);
-
-        this.controls = {
-            up: game.input.keyboard.addKey(Phaser.Keyboard.W),
-            down: game.input.keyboard.addKey(Phaser.Keyboard.S),
-            left: game.input.keyboard.addKey(Phaser.Keyboard.A),
-            right: game.input.keyboard.addKey(Phaser.Keyboard.D)
-        };
 
         var credTextStyle = { fill: 'white', font: '18px kenvector_futureregular' };
         this.credText = game.add.text(10, 10, this.player.creds.toString(), credTextStyle);
@@ -147,15 +165,11 @@ GameState.prototype = {
             this.player.creds += this.config.enemy.hitCost;
         }, null, this);
 
-        if (game.input.activePointer.isDown) {
-            this.player.fire();
-        }
-
         // this.background.tilePosition.x -= this.player.deltaX * 1.5;
         // this.background.tilePosition.y -= this.player.deltaY * 1.5;
 
-        if (this.enemies.countLiving() < 5) {
-            for (var i = 0; i < game.rnd.integerInRange(0, 3); i++) {
+        if (this.enemies.countLiving() < 1) {
+            for (var i = 0; i < game.rnd.integerInRange(0, 1); i++) {
                 var enemy = this.enemies.getFirstDead();
                 var p = new Phaser.Point(game.camera.view.randomX, game.camera.view.randomY);
                 if (game.math.distance(p.x, p.y, this.player.x, this.player.y) < this.config.enemy.minimumDistance) {
@@ -168,26 +182,6 @@ GameState.prototype = {
                 explosion.animations.play('burst');
             }
         }
-
-        var rotation = this.game.math.angleBetween(this.player.x, this.player.y, this.player.target.x, this.player.target.y);
-        this.player.rotation = rotation + this.player.rotationOffset;
-
-        var acc = new Phaser.Point(0, 0);
-        if (this.controls.up.isDown) {
-            acc.add(0, -1);
-        }
-        if (this.controls.down.isDown) {
-            acc.add(0, 1);
-        }
-        if (this.controls.left.isDown) {
-            acc.add(-1, 0);
-        }
-        if (this.controls.right.isDown) {
-            acc.add(1, 0);
-        }
-
-        acc.multiply(this.game.config.player.acceleration, this.game.config.player.acceleration);
-        this.player.body.acceleration.setTo(acc.x, acc.y);
     },
     render: function onRender (game) {
         this.credText.setText(this.player.creds.toString());

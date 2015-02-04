@@ -8,4 +8,8 @@ function WeaponManager (game, parent, data) {
 
 inherits(WeaponManager, Component);
 
+WeaponManager.prototype.fire = function () {
+    this.parent.fire();
+};
+
 module.exports = WeaponManager;

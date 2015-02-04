@@ -22,9 +22,11 @@ function Projectile (game, x, y, key, frame) {
     }, this);
 
     this.events.onOwnerChanged.add(function (owner) {
-        this.frameName = this.game.config[owner.shipType].projectileSprite;
+        this.frameName = owner.shipConfig.projectileSprite;
     }, this);
 }
+
+Projectile.requires = [components.ShipConfig];
 
 inherits(Projectile, Entity);
 

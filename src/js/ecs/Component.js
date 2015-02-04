@@ -3,7 +3,13 @@ var Phaser = require('phaser');
 function Component (game, parent, data) {
     this.game = game;
     this.parent = parent;
-    this.data = data;
+
+    data = data || {};
+    for (var prop in data) {
+        if (data.hasOwnProperty(prop)) {
+            this[prop] = data[prop];
+        }
+    }
 }
 
 Component.requires = [];
