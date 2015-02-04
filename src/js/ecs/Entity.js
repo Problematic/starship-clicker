@@ -4,6 +4,7 @@ var Component = require('./Component');
 function Entity (game, x, y, key, frame) {
     Phaser.Sprite.call(this, game, x, y, key, frame);
     this.game.add.existing(this);
+    this.id = game.rnd.uuid();
 
     this.components = new Map();
 
