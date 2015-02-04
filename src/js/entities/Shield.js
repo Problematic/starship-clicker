@@ -5,7 +5,6 @@ var Entity = require('../ecs/Entity');
 function Shield (game, x, y, key, frame) {
     Entity.call(this, game, x, y, key || 'sprites', frame || 'Effects/shield3');
 
-    this.addComponent(require('../components/ArcadeBody'));
     this.addComponent(require('../components/Ownable'));
 
     var anim = this.animations.add('remove', [
@@ -16,6 +15,11 @@ function Shield (game, x, y, key, frame) {
     anim.killOnComplete = true;
 
     this.events.onRevived.add(function () {
+        if (anim.isPlaying) {
+            // we do this so that the shield isn't immediately killed if we're
+            // grabbed out of the object pool before the animation is done
+            anim.stop();
+        }
         this.frameName = 'Effects/shield3';
     }, this);
 
