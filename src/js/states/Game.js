@@ -1,7 +1,6 @@
 var Phaser = require('phaser');
 var Entity = require('../ecs/Entity');
-var Starship = require('../entities/Starship');
-var Projectile = require('../entities/Projectile');
+var entities = require('../entities');
 var components = require('../components');
 
 function GameState () {}
@@ -39,17 +38,16 @@ GameState.prototype = {
         }, this);
 
         this.projectiles = game.add.group(game.world, 'projectiles');
-        this.projectiles.classType = Projectile;
+        this.projectiles.classType = entities.Projectile;
         this.projectiles.createMultiple(150, 'sprites', 'projectile');
 
-        this.player = new Starship(game, game.camera.view.centerX, game.camera.view.centerY, 'sprites', 'playerShip3_red');
+        this.player = new entities.Starship(game, game.camera.view.centerX, game.camera.view.centerY, 'sprites', 'playerShip3_red');
         this.player.addComponent(components.Faction, {
             faction: 'player'
         });
         this.player.addComponent(components.ShipConfig, {
             type: 'player'
         });
-        this.player.addComponent(components.Shield);
         this.player.addComponent(components.Invincible);
         this.player.addComponent(components.PlayerBrain, {
             controls: this.controls
@@ -61,11 +59,12 @@ GameState.prototype = {
         this.player.creds = 0;
         this.player.target = game.input.activePointer;
         this.player.projectiles = this.projectiles;
+        this.player.addChild(new entities.Shield(game, 0, 0, this.player));
 
         // game.camera.follow(this.player);
 
         this.enemies = game.add.group(game.world, 'enemies');
-        this.enemies.classType = Starship;
+        this.enemies.classType = entities.Starship;
         this.enemies.createMultiple(10, 'sprites', 'Enemies/enemyBlack1');
         this.enemies.forEach(function (enemy) {
             enemy.addComponent(components.Faction, {
@@ -74,7 +73,6 @@ GameState.prototype = {
             enemy.addComponent(components.ShipConfig, {
                 type: 'enemy'
             });
-            enemy.addComponent(components.Shield);
             enemy.addComponent(components.AIBrain);
             enemy.addComponent(components.HealthBar);
             enemy.body.drag.setTo(30);
@@ -82,6 +80,7 @@ GameState.prototype = {
             enemy.body.collideWorldBounds = true;
             enemy.target = this.player;
             enemy.projectiles = this.projectiles;
+            enemy.addChild(new entities.Shield(game, 0, 0, enemy));
 
             enemy.events.onKilled.add(function (enemy) {
                 var explosion = this.explosions.getFirstDead();

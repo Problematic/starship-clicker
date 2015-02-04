@@ -1,11 +1,13 @@
 var inherits = require('inherits');
 var Phaser = require('phaser');
 var Entity = require('../ecs/Entity');
+var DefenseManager = require('../components/DefenseManager');
 
-function Shield (game, x, y, key, frame) {
-    Entity.call(this, game, x, y, key || 'sprites', frame || 'Effects/shield3');
+function Shield (game, x, y, parent) {
+    Entity.call(this, game, x, y, 'sprites', 'Effects/shield3');
 
     this.addComponent(require('../components/Ownable'));
+    this.owner = parent;
 
     var anim = this.animations.add('remove', [
         // 'Effects/shield3',
@@ -23,8 +25,21 @@ function Shield (game, x, y, key, frame) {
         this.frameName = 'Effects/shield3';
     }, this);
 
-    this.regenInterval = 1000;
     this.nextRegenTime = null;
+    this.regenInterval = this.owner.shipConfig.shieldRegenInterval;
+    this.health = this.owner.shipConfig.shield;
+    this.maxHealth = this.owner.shipConfig.shield;
+    this.scale.x *= this.owner.spriteConfig.flip[0];
+    this.scale.y *= this.owner.spriteConfig.flip[1];
+
+    if (this.owner.hasComponent(DefenseManager)) {
+        this.owner.getComponent(DefenseManager).addDefense(this);
+    }
+
+    this.owner.events.onRevived.add(function () {
+        this.revive(this.owner.shipConfig.shield);
+    }, this);
+    this.owner.shield = this;
 }
 
 inherits(Shield, Entity);

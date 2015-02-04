@@ -8,7 +8,6 @@ module.exports = {
     LockTo: require('./LockTo'),
     Ownable: require('./Ownable'),
     PlayerBrain: require('./PlayerBrain'),
-    Shield: require('./Shield'),
     ShipConfig: require('./ShipConfig'),
     Weapon: require('./Weapon'),
     WeaponManager: require('./WeaponManager')

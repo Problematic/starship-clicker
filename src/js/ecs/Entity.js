@@ -18,8 +18,12 @@ Entity.prototype = Object.create(Phaser.Sprite.prototype);
 Entity.prototype.constructor = Entity;
 
 Entity.prototype.update = function () {
-    this.components.forEach(function (c) {
-        c.update();
+    this.components.forEach(function (component) {
+        component.update();
+    });
+
+    this.children.forEach(function (child) {
+        child.update();
     });
 };
 
