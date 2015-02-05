@@ -1,5 +1,11 @@
 {
   "sprites": {
+    "__default": {
+      "anchor": [0, 0],
+      "rotationOffsetMod": 0,
+      "scale": [1, 1],
+      "flip": [1, 1]
+    },
     "playerShip3_red": {
       "anchor": [0.5, 0.5],
       "rotationOffsetMod": 0.5,
@@ -37,13 +43,18 @@
     "rateOfFire": 5,
     "acceleration": 500,
     "lateralAcceleration": 500,
-    "projectileColor": "Blue",
-    "projectileSprite": "Lasers/laserBlue01",
-    "projectileDamage": 1,
     "shield": 2,
     "shieldRegenInterval": 3000,
     "critChance": 0.2,
-    "critMultiplier": 2
+    "critMultiplier": 2,
+    "hardpoints": [
+      [0, 0],
+      [1, 0]
+    ],
+    "weapons": [
+      "laser-light",
+      "laser-light"
+    ]
   },
   "enemy": {
     "minimumDistance": 75,
@@ -51,14 +62,37 @@
     "credValue": 10,
     "projectileSpeed": 500,
     "rateOfFire": 0.5,
-    "projectileColor": "Red",
-    "projectileSprite": "Lasers/laserRed01",
-    "projectileDamage": 1,
     "hitCost": -10,
     "health": 2,
     "shield": 3,
     "shieldRegenInterval": 3000,
     "critChance": 0,
-    "critMultiplier": 1
+    "critMultiplier": 1,
+    "hardpoints": [
+      [0.5, 0]
+    ],
+    "weapons": [
+      "laser-light"
+    ]
+  },
+  "weapons": {
+    "laser-light": {
+      "rateOfFire": 1,
+      "flareSprite": "Lasers/laserRed",
+      "projectile": {
+        "sprite": "Lasers/laserRed01",
+        "velocity": 500,
+        "damage": 1
+      }
+    },
+    "laser-heavy": {
+      "rateOfFire": 0.5,
+      "flareSprite": "Lasers/laserRed",
+      "projectile": {
+        "sprite": "Lasers/laserRed03",
+        "velocity": 350,
+        "damage": 3
+      }
+    }
   }
 }

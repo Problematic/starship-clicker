@@ -18,6 +18,6 @@ Component.prototype.enabled = true;
 
 Component.prototype.update = function () {};
 
-Component.prototype.remove = function () {};
+Component.prototype.tearDown = function () {};
 
 module.exports = Component;

@@ -3,6 +3,7 @@ module.exports = {
     ArcadeBody: require('./ArcadeBody'),
     DefenseManager: require('./DefenseManager'),
     Faction: require('./Faction'),
+    HardpointManager: require('./HardpointManager'),
     HealthBar: require('./HealthBar'),
     Invincible: require('./Invincible'),
     LockTo: require('./LockTo'),

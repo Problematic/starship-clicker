@@ -20,10 +20,6 @@ function Projectile (game, x, y, key, frame) {
 
         this.body.setSize(dim, dim, sep.x, sep.y);
     }, this);
-
-    this.events.onOwnerChanged.add(function (owner) {
-        this.frameName = owner.shipConfig.projectileSprite;
-    }, this);
 }
 
 Projectile.requires = [components.ShipConfig];

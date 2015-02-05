@@ -58,8 +58,20 @@ GameState.prototype = {
         this.player.nextShotAt = game.time.time;
         this.player.creds = 0;
         this.player.target = game.input.activePointer;
-        this.player.projectiles = this.projectiles;
+        this.player.getComponent(components.WeaponManager).projectiles = this.projectiles;
         this.player.addChild(new entities.Shield(game, 0, 0, this.player));
+        this.player.shipConfig.hardpoints.forEach(function (hardpoint, idx) {
+            this.player.getComponent(components.HardpointManager).addHardpoint({
+                x: this.player.width * hardpoint[0],
+                y: this.player.height * hardpoint[1]
+            });
+        }, this);
+        this.player.shipConfig.weapons.forEach(function (type, idx) {
+            this.player.getComponent(components.WeaponManager).createWeapon(
+                this.player.hardpoints[idx],
+                game.config.weapons[type]
+            );
+        }, this);
 
         // game.camera.follow(this.player);
 
@@ -79,8 +91,21 @@ GameState.prototype = {
             enemy.body.maxVelocity.setTo(100);
             enemy.body.collideWorldBounds = true;
             enemy.target = this.player;
-            enemy.projectiles = this.projectiles;
+            enemy.getComponent(components.WeaponManager).projectiles = this.projectiles;
             enemy.addChild(new entities.Shield(game, 0, 0, enemy));
+
+            enemy.shipConfig.hardpoints.forEach(function (hardpoint, idx) {
+                enemy.getComponent(components.HardpointManager).addHardpoint({
+                    x: enemy.width * hardpoint[0],
+                    y: enemy.height * hardpoint[1]
+                });
+            }, this);
+            enemy.shipConfig.weapons.forEach(function (type, idx) {
+                enemy.getComponent(components.WeaponManager).createWeapon(
+                    enemy.hardpoints[idx],
+                    game.config.weapons[type]
+                );
+            }, this);
 
             enemy.events.onKilled.add(function (enemy) {
                 var explosion = this.explosions.getFirstDead();
@@ -129,23 +154,19 @@ GameState.prototype = {
         game.physics.arcade.collide(this.enemies);
 
         game.physics.arcade.overlap(this.projectiles, this.enemies, function (projectile, enemy) {
-            if (projectile.owner.shipType === 'enemy') { return; }
-
             // TODO: refactor this into the projectile itself
-            var damage = this.game.config.player.projectileDamage * (Phaser.Math.chanceRoll(this.game.config.player.critChance * 100) ? this.game.config.player.critMultiplier : 1);
+            var damage = projectile.payloadDamage * (Phaser.Math.chanceRoll(this.game.config.player.critChance * 100) ? this.game.config.player.critMultiplier : 1);
             enemy.damage(damage);
             projectile.kill();
             this.game.plugins.juicy.shake(16, 5);
         }, null, this);
 
         game.physics.arcade.overlap(this.projectiles, this.player, function (player, projectile) {
-            if (projectile.owner.shipType === 'player') { return; }
-
             projectile.kill();
             this.game.plugins.juicy.shake(24, 25);
             this.screenFlash.flash(0.25, 16);
 
-            this.player.damage(this.game.config.enemy.projectileDamage);
+            this.player.damage(projectile.payloadDamage);
 
             if (this.player.shield.health > 0) { return; }
 
@@ -170,8 +191,8 @@ GameState.prototype = {
         // this.background.tilePosition.x -= this.player.deltaX * 1.5;
         // this.background.tilePosition.y -= this.player.deltaY * 1.5;
 
-        if (this.enemies.countLiving() < 5) {
-            for (var i = 0; i < game.rnd.integerInRange(0, 3); i++) {
+        if (this.enemies.countLiving() < 1) {
+            for (var i = 0; i < game.rnd.integerInRange(0, 1); i++) {
                 var enemy = this.enemies.getFirstDead();
                 var p = new Phaser.Point(game.camera.view.randomX, game.camera.view.randomY);
                 if (game.math.distance(p.x, p.y, this.player.x, this.player.y) < this.config.enemy.minimumDistance) {
